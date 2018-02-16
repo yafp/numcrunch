@@ -3,26 +3,29 @@
 ''' a simple number cruncher (calculator) in python '''
 
 
-# https://github.com/hiamandeep/tkcalc/blob/master/tkcalc.py
-# https://github.com/kirimijesse/GUI-Python-Calculator-/blob/master/calculator.py
-
 # icon:
 # https://www.iconsdb.com/navy-blue-icons/calculator-8-icon.html
 
 # ------------------------------------------------------------------------------
 # IMPORTS
 # ------------------------------------------------------------------------------
-import Tkinter as Tk
+import sys                          # to show python version used
+import os
 import datetime                     # for timestamp generation
-import tkFont                       # for fonts
-#import math
-from PIL import Image, ImageTk      # for image handling
 
-import __future__
+if sys.version_info >= (3, 0):
+    import tkinter as tk
+    from tkinter import font
+    #import PIL.Image
+
+else: # python 2.x
+    import Tkinter as tk
+    import tkFont     # for fonts
+    #from PIL import Image, ImageTk      # for image handling
 
 # project specific
 import colors as c
-import settings as s 
+import settings as s
 
 
 # ---------------------------------------------------------------------------- #
@@ -35,48 +38,53 @@ def on_verbose(message):
         print(timestamp + " ::: "+message)
 
 
-class Window(Tk.Frame):
-    ''' foo '''
+class Window(tk.Frame):
+    ''' the window '''
     def __init__(self, master=None):
         ''' init the frame '''
-        Tk.Frame.__init__(self, master)
+        tk.Frame.__init__(self, master)
         self.master = master
         self.master.resizable(width=False, height=False)
         self.master.title(s.APP_NAME)
-        self.master.geometry('{}x{}'.format(s.WINDOW_WIDTH, s.WINDOW_HEIGHT))
+
+        # centric window position
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        x = (screen_width/2)-(s.WINDOW_WIDTH/2)
+        y = (screen_height/2)-(s.WINDOW_HEIGHT/2)
+        self.master.geometry('%dx%d+%d+%d'%(s.WINDOW_WIDTH, s.WINDOW_HEIGHT, x, y))
+        #self.master.geometry('{}x{}'.format(s.WINDOW_WIDTH, s.WINDOW_HEIGHT))
 
         # Font
         #
-        display_font_big = tkFont.Font(family='digital-7', size=48, weight='normal')
-        display_font_small = tkFont.Font(family='digital-7', size=12, weight='normal')
-        display_font_small_bold = tkFont.Font(family='digital-7', size=12, weight='bold')
+        if sys.version_info >= (3, 0):
+            display_font_big = font.Font(family='digital-7', size=48, weight='normal')
+            display_font_small = font.Font(family='digital-7', size=12, weight='normal')
+            display_font_small_bold = font.Font(family='digital-7', size=12, weight='bold')
+        else:
+            display_font_big = tkFont.Font(family='digital-7', size=48, weight='normal')
+            display_font_small = tkFont.Font(family='digital-7', size=12, weight='normal')
+            display_font_small_bold = tkFont.Font(family='digital-7', size=12, weight='bold')
 
         # Window icon
-        icon = Tk.PhotoImage(file='images/calc.png')
+        icon_path = os.path.join(os.path.dirname(__file__), 'images/calc.png')
+        icon = tk.PhotoImage(file=icon_path)
         self.master.call('wm', 'iconphoto', self.master, icon)
 
 
         # ROW 0 - Head
         #
         # LABEL: calculator model/series
-        self.label_series = Tk.Label(root, text="PUE-2703 P-Series")
+        self.label_series = tk.Label(root, text="PUE-2703 P-Series")
         self.label_series['font'] = display_font_small_bold
         self.label_series.grid(row=0, column=1, columnspan=2, sticky="w", padx=10, pady=(10, 0))
         self.label_series.config(fg=c.GRAY)
-
-        # solar panel image
-        image = Image.open("images/solar-panel.gif")
-        photo = ImageTk.PhotoImage(image)
-        self.label = Tk.Label(image=photo)
-        self.label.image = photo
-        self.label.config(justify='right')
-        self.label.grid(row=0, column=3, columnspan=2, sticky="e", padx=30, pady=(10, 0))
 
 
         # ROW 1
         #
         # ENTRY - History / Status
-        self.entry_status = Tk.Entry(root, width=s.INPUT_WIDTH)
+        self.entry_status = tk.Entry(root, width=s.INPUT_WIDTH)
         self.entry_status['justify'] = 'right'
         self.entry_status['bg'] = c.BLACK
         self.entry_status['fg'] = c.GREEN
@@ -92,7 +100,7 @@ class Window(Tk.Frame):
         # ROW 2
         #
         # ENTRY - Display
-        self.entry_display = Tk.Entry(root, width=s.INPUT_WIDTH)
+        self.entry_display = tk.Entry(root, width=s.INPUT_WIDTH)
         self.entry_display['justify'] = 'center'
         self.entry_display['bg'] = c.BLACK
         self.entry_display['fg'] = c.GREEN
@@ -108,7 +116,7 @@ class Window(Tk.Frame):
         # ROW 3:
         #
         # Button: Backspace
-        self.bt_backspace = Tk.Button(self.master, command=lambda: self.backspace())
+        self.bt_backspace = tk.Button(self.master, command=lambda: self.backspace())
         self.bt_backspace['text'] = "BACK"
         self.bt_backspace['state'] = "normal"
         self.bt_backspace['width'] = s.BUTTON_WIDTH
@@ -121,7 +129,7 @@ class Window(Tk.Frame):
         self.bt_backspace.grid(row=3, column=1, padx=s.BUTTON_PADDING_X, pady=(0, 15))
 
         # ESC
-        self.bt_esc = Tk.Button(self.master, command=lambda: self.clear_text())
+        self.bt_esc = tk.Button(self.master, command=lambda: self.reset_ui())
         self.bt_esc['text'] = "RESET"
         self.bt_esc['state'] = "normal"
         self.bt_esc['width'] = s.BUTTON_WIDTH
@@ -137,7 +145,7 @@ class Window(Tk.Frame):
         # ROW 4
         #
         # Button 7
-        self.bt_7 = Tk.Button(self.master, command=lambda: self.append_to_display(7))
+        self.bt_7 = tk.Button(self.master, command=lambda: self.append_to_display(7))
         self.bt_7['text'] = "7"
         self.bt_7['state'] = "normal"
         self.bt_7['width'] = s.BUTTON_WIDTH
@@ -150,7 +158,7 @@ class Window(Tk.Frame):
         self.bt_7.grid(row=4, column=1, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button 8
-        self.bt_8 = Tk.Button(self.master, command=lambda: self.append_to_display(8))
+        self.bt_8 = tk.Button(self.master, command=lambda: self.append_to_display(8))
         self.bt_8['text'] = "8"
         self.bt_8['state'] = "normal"
         self.bt_8['width'] = s.BUTTON_WIDTH
@@ -163,7 +171,7 @@ class Window(Tk.Frame):
         self.bt_8.grid(row=4, column=2, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button 9
-        self.bt_9 = Tk.Button(self.master, command=lambda: self.append_to_display(9))
+        self.bt_9 = tk.Button(self.master, command=lambda: self.append_to_display(9))
         self.bt_9['text'] = "9"
         self.bt_9['state'] = "normal"
         self.bt_9['width'] = s.BUTTON_WIDTH
@@ -176,7 +184,7 @@ class Window(Tk.Frame):
         self.bt_9.grid(row=4, column=3, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button: Operator +
-        self.bt_op_add = Tk.Button(self.master, command=lambda: self.append_to_display(" + "))
+        self.bt_op_add = tk.Button(self.master, command=lambda: self.append_to_display(" + "))
         self.bt_op_add['text'] = "+"
         self.bt_op_add['state'] = "normal"
         self.bt_op_add['width'] = s.BUTTON_WIDTH
@@ -192,7 +200,7 @@ class Window(Tk.Frame):
         # ROW 5 - 4-6
         #
         # Button 4
-        self.bt_4 = Tk.Button(self.master, command=lambda: self.append_to_display(4))
+        self.bt_4 = tk.Button(self.master, command=lambda: self.append_to_display(4))
         self.bt_4['text'] = "4"
         self.bt_4['state'] = "normal"
         self.bt_4['width'] = s.BUTTON_WIDTH
@@ -205,7 +213,7 @@ class Window(Tk.Frame):
         self.bt_4.grid(row=5, column=1, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button 5
-        self.bt_5 = Tk.Button(self.master, command=lambda: self.append_to_display(5))
+        self.bt_5 = tk.Button(self.master, command=lambda: self.append_to_display(5))
         self.bt_5['text'] = "5"
         self.bt_5['state'] = "normal"
         self.bt_5['width'] = s.BUTTON_WIDTH
@@ -218,7 +226,7 @@ class Window(Tk.Frame):
         self.bt_5.grid(row=5, column=2, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button 6
-        self.bt_6 = Tk.Button(self.master, command=lambda: self.append_to_display(6))
+        self.bt_6 = tk.Button(self.master, command=lambda: self.append_to_display(6))
         self.bt_6['text'] = "6"
         self.bt_6['state'] = "normal"
         self.bt_6['width'] = s.BUTTON_WIDTH
@@ -231,7 +239,7 @@ class Window(Tk.Frame):
         self.bt_6.grid(row=5, column=3, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button: Operator -
-        self.bt_op_subst = Tk.Button(self.master, command=lambda: self.append_to_display(" - "))
+        self.bt_op_subst = tk.Button(self.master, command=lambda: self.append_to_display(" - "))
         self.bt_op_subst['text'] = "-"
         self.bt_op_subst['state'] = "normal"
         self.bt_op_subst['width'] = s.BUTTON_WIDTH
@@ -247,7 +255,7 @@ class Window(Tk.Frame):
         # ROW 6 - 1-3
         #
         # Button 1
-        self.bt_1 = Tk.Button(self.master, command=lambda: self.append_to_display(1))
+        self.bt_1 = tk.Button(self.master, command=lambda: self.append_to_display(1))
         self.bt_1['text'] = "1"
         self.bt_1['state'] = "normal"
         self.bt_1['width'] = s.BUTTON_WIDTH
@@ -260,7 +268,7 @@ class Window(Tk.Frame):
         self.bt_1.grid(row=6, column=1, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button 2
-        self.bt_2 = Tk.Button(self.master, command=lambda: self.append_to_display(2))
+        self.bt_2 = tk.Button(self.master, command=lambda: self.append_to_display(2))
         self.bt_2['text'] = "2"
         self.bt_2['state'] = "normal"
         self.bt_2['width'] = s.BUTTON_WIDTH
@@ -273,7 +281,7 @@ class Window(Tk.Frame):
         self.bt_2.grid(row=6, column=2, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button 3
-        self.bt_3 = Tk.Button(self.master, command=lambda: self.append_to_display(3))
+        self.bt_3 = tk.Button(self.master, command=lambda: self.append_to_display(3))
         self.bt_3['text'] = "3"
         self.bt_3['state'] = "normal"
         self.bt_3['width'] = s.BUTTON_WIDTH
@@ -286,7 +294,7 @@ class Window(Tk.Frame):
         self.bt_3.grid(row=6, column=3, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button: Operator *
-        self.bt_op_multi = Tk.Button(self.master, command=lambda: self.append_to_display(" * "))
+        self.bt_op_multi = tk.Button(self.master, command=lambda: self.append_to_display(" * "))
         self.bt_op_multi['text'] = "*"
         self.bt_op_multi['state'] = "normal"
         self.bt_op_multi['width'] = s.BUTTON_WIDTH
@@ -301,7 +309,7 @@ class Window(Tk.Frame):
         # ROW 7
         #
         # Button: ,
-        self.bt_comma = Tk.Button(self.master, command=lambda: self.append_to_display("."))
+        self.bt_comma = tk.Button(self.master, command=lambda: self.append_to_display("."))
         self.bt_comma['text'] = "."
         self.bt_comma['state'] = "normal"
         self.bt_comma['width'] = s.BUTTON_WIDTH
@@ -314,7 +322,7 @@ class Window(Tk.Frame):
         self.bt_comma.grid(row=7, column=1, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
         # Button: 0
-        self.bt_0 = Tk.Button(self.master, command=lambda: self.append_to_display(0))
+        self.bt_0 = tk.Button(self.master, command=lambda: self.append_to_display(0))
         self.bt_0['text'] = "0"
         self.bt_0['state'] = "normal"
         self.bt_0['width'] = s.BUTTON_WIDTH
@@ -328,7 +336,7 @@ class Window(Tk.Frame):
 
 
         # Button: %
-        self.bt_percent = Tk.Button(self.master, command=lambda: self.append_to_display('%'))
+        self.bt_percent = tk.Button(self.master, command=lambda: self.append_to_display('%'))
         self.bt_percent['text'] = "%"
         self.bt_percent['state'] = "normal"
         self.bt_percent['width'] = s.BUTTON_WIDTH
@@ -342,7 +350,7 @@ class Window(Tk.Frame):
 
 
         # Button: Operator /
-        self.bt_op_div = Tk.Button(self.master, command=lambda: self.append_to_display(" / "))
+        self.bt_op_div = tk.Button(self.master, command=lambda: self.append_to_display(" / "))
         self.bt_op_div['text'] = "/"
         self.bt_op_div['state'] = "normal"
         self.bt_op_div['width'] = s.BUTTON_WIDTH
@@ -355,10 +363,10 @@ class Window(Tk.Frame):
         self.bt_op_div.grid(row=7, column=4, padx=s.BUTTON_PADDING_X, pady=s.BUTTON_PADDING_Y)
 
 
-        # ROW 8 - 
+        # ROW 8
         #
         # Button: =
-        self.bt_equals = Tk.Button(self.master, command=lambda: self.on_calc())
+        self.bt_equals = tk.Button(self.master, command=lambda: self.on_calc())
         self.bt_equals['text'] = "="
         self.bt_equals['state'] = "normal"
         self.bt_equals['width'] = 20
@@ -375,7 +383,7 @@ class Window(Tk.Frame):
         # ROW 9 - Footer
         #
         # LABEL
-        self.ui_footer_label = Tk.Label(root, text=s.APP_NAME+" v"+s.APP_VERSION+"\n"+s.APP_URL)
+        self.ui_footer_label = tk.Label(root, text=s.APP_NAME+" v"+s.APP_VERSION+"\n"+s.APP_URL)
         self.ui_footer_label.config(justify='center') # center input
         self.ui_footer_label.grid(row=9, column=1, columnspan=4, pady=10)
         self.ui_footer_label.config(fg="gray")
@@ -387,20 +395,25 @@ class Window(Tk.Frame):
 
         # master.grid_columnconfigure(4, minsize=100)
         col_count, row_count = master.grid_size()
-        for col in xrange(col_count):
-            master.grid_columnconfigure(col, minsize=20)
+        if sys.version_info >= (3, 0):
+            for col in range(col_count):
+                master.grid_columnconfigure(col, minsize=20)
+            for row in range(row_count):
+                master.grid_rowconfigure(row, minsize=20)
+            
+        else:
+            for col in xrange(col_count):
+                master.grid_columnconfigure(col, minsize=20)
 
-        for row in xrange(row_count):
-            master.grid_rowconfigure(row, minsize=20)
-
-        # eye-candy: change status line color over time
-        self.change_color()
+            for row in xrange(row_count):
+                master.grid_rowconfigure(row, minsize=20)
 
 
     def keydown(self, event):
         ''' triggered by key-presses '''
         on_verbose('Function keydown launched')
-        print "\tPressed", repr(event.char)
+        on_verbose("\tPressed "+repr(event.char))
+        #print "\tPressed", repr(event.char)
 
         if event.char in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', \
                             '+', '-', '*', '/', '.', '(', ')', '%']:
@@ -427,22 +440,31 @@ class Window(Tk.Frame):
         self.expression = self.expression.replace("%", "/ 100")
         on_verbose("\t"+self.expression)
 
+        # Update history
+        self.entry_status.config(disabledforeground=c.GREEN)
+        self.entry_status['state'] = 'normal'
+        self.entry_status.delete(0, tk.END)
+        self.entry_status.insert(0, self.expression+" ")
+        self.entry_status['state'] = 'disabled'
+
+
         try:
             #self.result = eval(self.expression) # 1/2 = 0
-            self.result = eval(self.expression+'.0') # 1/2 = 0.5 
+            self.result = eval(self.expression+'.0') # 1/2 = 0.5
 
             # Try to detect if results ends with .0
             split = str(self.result).split('e')
             if split[0].endswith('.0'):
-                self.replace_text(self.result) 
+                self.replace_text(self.result)
                 self.backspace()
                 self.backspace()
             else:
-                 self.replace_text(self.result)
+                self.replace_text(self.result)
 
             #self.replace_text(self.result)
         except:
             on_verbose("\tError: on_calc")
+            self.calculation_error()
 
 
 
@@ -490,14 +512,9 @@ class Window(Tk.Frame):
         ''' replace existing display text '''
         on_verbose("Function: replace_text launched")
 
-        # enable display
         self.entry_display['state'] = 'normal'
-
-        # update display
-        self.entry_display.delete(0, Tk.END)
+        self.entry_display.delete(0, tk.END)
         self.entry_display.insert(0, text)
-
-        # disable display
         self.entry_display['state'] = 'disabled'
 
 
@@ -506,48 +523,42 @@ class Window(Tk.Frame):
         ''' Resets the input '''
         on_verbose("Function: clear_text launched")
 
-        # enable display
         self.entry_display['state'] = 'normal'
-
-        self.entry_display.delete(0, Tk.END)
-
-        # disable display
+        self.entry_display.delete(0, tk.END)
         self.entry_display['state'] = 'disabled'
 
 
 
-    def change_color(self):
-        ''' eye-candy: change color of status line in display'''
-        on_verbose("Function: change_color launched")
+    def reset_ui(self):
+        ''' Resets the entire user interface '''
+        on_verbose("Function: reset_ui launched")
 
-        current_color = self.entry_status.cget('disabledforeground')
-        on_verbose("\tCurrent status line color: "+str(current_color))
+        # clear display
+        self.clear_text()
 
-        if current_color == c.YELLOW:
-            next_color = c.BLACK
-            next_interval = 50000
-            next_status_text = ""
-        else:
-            next_color = c.YELLOW
-            next_interval = 2000
-            next_status_text = "Battery low "
-
-        on_verbose("\tComing status line color: "+str(next_color))
-
-        # updating color & text
-        self.entry_status.config(disabledforeground=next_color)
+        # clear history
+        self.entry_status['disabledforeground'] = c.GREEN
         self.entry_status['state'] = 'normal'
-        self.entry_status.delete(0, Tk.END)
-        self.entry_status.insert(0, next_status_text)
+        self.entry_status.delete(0, tk.END)
         self.entry_status['state'] = 'disabled'
 
-        root.after(next_interval, self.change_color)
+
+
+    def calculation_error(self):
+        ''' Displays an error in display history '''
+        self.reset_ui()
+
+        self.entry_status['disabledforeground'] = c.YELLOW
+        self.entry_status['state'] = 'normal'
+        self.entry_status.delete(0, tk.END)
+        self.entry_status.insert(0, "Error - Please Press RESET ")
+        self.entry_status['state'] = 'disabled'
 
 
 
 # ------------------------------------------------------------------------------
 # Let user select an XML file
 # ------------------------------------------------------------------------------
-root = Tk.Tk()
+root = tk.Tk()
 app = Window(root)
 root.mainloop()

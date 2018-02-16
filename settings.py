@@ -10,7 +10,7 @@ import colors as c
 # SETTINGS
 # ------------------------------------------------------------------------------
 APP_NAME = "NumCrunch"
-APP_VERSION = "20180208.01"
+APP_VERSION = "20180216.01"
 APP_URL = "https://www.github.com/yafp/numcrunch/"
 
 VERBOSE = True
@@ -18,7 +18,7 @@ VERBOSE = True
 
 # Window size
 WINDOW_WIDTH = 420
-WINDOW_HEIGHT = 680
+WINDOW_HEIGHT = 720
 
 # Input size
 INPUT_WIDTH = 1
