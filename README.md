@@ -20,13 +20,13 @@ a simple number cruncher (calculator) using python and tkinter
 for python 2:
 
 - python-tk
-- python-pil.imagetk
+
 
 
 for python 3:
 
 - python3-tk
-- python3-pil.imagetk
+
 
 
 ## installation
