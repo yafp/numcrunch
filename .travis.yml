@@ -16,6 +16,5 @@ install:
 
 ## command to run tests
 script: 
-    #- coverage run tests.py
-    - python numcrunch.py
+    - pytest
 
