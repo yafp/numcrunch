@@ -13,7 +13,7 @@ a simple number cruncher (calculator) using python and tkinter
 
 
 ## UI
-![ui](https://raw.githubusercontent.com/yafp/numcrunch/master/images/ui.png)
+![ui](https://raw.githubusercontent.com/yafp/numcrunch/master/numcrunch/images/ui.png)
 
 
 ## requirements
