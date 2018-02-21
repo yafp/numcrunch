@@ -14,7 +14,8 @@ import os
 import datetime                     # for timestamp generation
 
 if sys.version_info >= (3, 0):
-    import tkinter as tk
+    #import tkinter as tk
+    from tkinter import *
     from tkinter import font
     #import PIL.Image
 
