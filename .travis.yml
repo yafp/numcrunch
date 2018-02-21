@@ -1,7 +1,7 @@
 language: python
 python:
-  #- "2.7"
-  - "3.5"
+  - "2.7"
+  #- "3.5"
 
 ## system package requirements
 before_install:
@@ -17,5 +17,5 @@ install:
 
 ## command to run tests
 script: 
-    - py.test
+    - py.test -v --color=yes --exitfirst --showlocals --durations=5
 
