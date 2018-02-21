@@ -30,7 +30,7 @@ setup(
 
     ## include images from gfx subfolder
     package_data={'apparat_launcher': [
-        'images/*.png'
+        'numcrunch/images/*.png'
     ]},
 
 
@@ -49,7 +49,7 @@ setup(
         'Development Status :: 3 - Alpha',
 
         ## Environment
-        'Environment :: X11 Applications :: Gnome',
+        #'Environment :: X11 Applications :: Gnome',
 
         ## Indicate who your project is intended for
         'Intended Audience :: Developers',
@@ -63,5 +63,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.5',
     ],
 )
