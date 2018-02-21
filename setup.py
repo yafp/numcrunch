@@ -29,7 +29,7 @@ setup(
     keywords='calculator',
 
     ## include images from gfx subfolder
-    package_data={'apparat_launcher': [
+    package_data={'numcrunch': [
         'numcrunch/images/*.png'
     ]},
 
